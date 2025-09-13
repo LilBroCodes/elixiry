@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "elixiry",
+  "version": "${version}",
+  "name": "Elixiry",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/elixiry/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "org.lilbrocodes.elixiry.client.ElixiryClient"
+    ],
+    "main": [
+      "org.lilbrocodes.elixiry.Elixiry"
+    ]
+  },
+  "mixins": [
+    "elixiry.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
