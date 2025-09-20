@@ -1,0 +1,34 @@
+{
+  "swim1": {
+    "sounds": [
+      {
+        "name": "minecraft:liquid/swim1",
+        "stream": false
+      }
+    ]
+  },
+  "swim2": {
+    "sounds": [
+      {
+        "name": "minecraft:liquid/swim2",
+        "stream": false
+      }
+    ]
+  },
+  "swim3": {
+    "sounds": [
+      {
+        "name": "minecraft:liquid/swim3",
+        "stream": false
+      }
+    ]
+  },
+  "swim4": {
+    "sounds": [
+      {
+        "name": "minecraft:liquid/swim4",
+        "stream": false
+      }
+    ]
+  }
+}

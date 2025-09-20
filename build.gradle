@@ -10,6 +10,12 @@ base {
     archivesName = archives_base_name
 }
 
+fabricApi {
+    configureDataGeneration {
+        client = true
+    }
+}
+
 repositories {
     maven {
         name = "Ladysnake [Composer]"
@@ -27,7 +33,10 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${loader_version}"
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
-    modImplementation "org.lilbrocodes:composer-reloaded:${project.composer_version}"
+    modImplementation "org.lilbrocodes:composer-reloaded:${composer_version}"
+
+    // Composer
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-api:${cca_version}"
 }
 
 processResources {

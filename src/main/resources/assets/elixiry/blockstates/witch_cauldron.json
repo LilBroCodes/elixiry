@@ -1,0 +1,6 @@
+  {
+  "variants": {
+    "has_fluid=false": { "model": "elixiry:block/witch_cauldron" },
+    "has_fluid=true": { "model": "elixiry:block/witch_cauldron_full" }
+  }
+}

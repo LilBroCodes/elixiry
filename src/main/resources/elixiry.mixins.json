@@ -1,9 +1,12 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "org.lilbrocodes.elixiry.mixin",
+  "package": "org.lilbrocodes.elixiry.mixin.impl",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "BrewingStandBlockEntityMixin",
+    "PotionUtilMixin",
+    "StatusEffectInstanceMixin"
   ],
   "client": [
   ],

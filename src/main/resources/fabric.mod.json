@@ -10,6 +10,9 @@
   "icon": "assets/elixiry/icon.png",
   "environment": "*",
   "entrypoints": {
+    "fabric-datagen": [
+      "org.lilbrocodes.elixiry.data.ElixiryDataGenerator"
+    ],
     "client": [
       "org.lilbrocodes.elixiry.client.ElixiryClient"
     ],
