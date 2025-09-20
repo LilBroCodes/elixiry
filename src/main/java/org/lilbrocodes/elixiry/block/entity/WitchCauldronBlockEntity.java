@@ -8,11 +8,9 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.PotionItem;
 import net.minecraft.nbt.NbtByte;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtInt;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
@@ -23,7 +21,6 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.potion.Potions;
 import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -32,7 +29,7 @@ import net.minecraft.world.World;
 import org.joml.Vector3f;
 import org.lilbrocodes.composer_reloaded.api.particle.ParticleManager;
 import org.lilbrocodes.elixiry.block.WitchCauldron;
-import org.lilbrocodes.elixiry.recipe.processing.ActiveBrewingRecipe;
+import org.lilbrocodes.elixiry.recipe.processing.ActiveBrewingSession;
 import org.lilbrocodes.elixiry.registry.ModBlockEntities;
 import org.lilbrocodes.elixiry.registry.ModBlocks;
 import org.lilbrocodes.elixiry.util.PotionModifier;
@@ -80,7 +77,7 @@ public class WitchCauldronBlockEntity extends BlockEntity {
     public final List<ItemData> itemData = DefaultedList.ofSize(MAX_ITEMS, new ItemData(0, 0));
     public Potion potion = Potions.EMPTY;
     public PotionModifier modifier = new PotionModifier(0, 0);
-    public ActiveBrewingRecipe recipe;
+    public ActiveBrewingSession session;
 
     public float stickTicks = 0;
     public float stickRotation = 0;
@@ -222,20 +219,24 @@ public class WitchCauldronBlockEntity extends BlockEntity {
                     data.tick(hasFluid);
                 }
             } else {
-                if (recipe == null) {
-                    this.recipe = ActiveBrewingRecipe.start(this);
+                if (session == null) {
+                    this.session = ActiveBrewingSession.start(this);
                 } else {
-                    if (recipe.tick(this)) {
+                    if (session.tick(this)) {
                         explode();
-                        recipe = null;
-                    } else if (recipe.done()) {
-                        this.potion = recipe.getResult();
-                        this.modifier = recipe.getModifier(world, pos);
-                        this.recipe = null;
+                        session = null;
+                    } else if (session.done()) {
+                        var winner = session.getWinningRecipe();
+                        if (winner != null) {
+                            this.potion = winner.getResult();
+                            this.modifier = winner.getModifier(world, pos);
+                        }
+                        this.session = null;
                         this.inventory.clear();
                         markDirty();
                     }
                 }
+
             }
         }
     }
@@ -266,13 +267,13 @@ public class WitchCauldronBlockEntity extends BlockEntity {
 
     public ItemStack addItem(ItemStack stack) {
         ItemStack intermediary = this.inventory.addStack(stack.copy());
-        if (recipe != null && recipe.addItem(stack)) explode();
+        if (session != null && session.addItem(stack)) explode();
         markDirty();
         return intermediary;
     }
 
     public boolean canTakePotion() {
-        return recipe == null;
+        return session == null;
     }
 
     public void setPotion(Potion potion, PotionModifier modifier) {
@@ -318,7 +319,7 @@ public class WitchCauldronBlockEntity extends BlockEntity {
     }
 
     public void stir(StirDirection direction) {
-        if (recipe != null && recipe.stir(direction)) explode();
+        if (session != null && session.stir(direction)) explode();
         markDirty();
     }
 
@@ -331,9 +332,11 @@ public class WitchCauldronBlockEntity extends BlockEntity {
     protected void writeNbt(NbtCompound tag) {
         super.writeNbt(tag);
         tag.put("Items", inventory.toNbtList());
-        tag.put("Recipe", recipe != null ? recipe.writeNbt(new NbtCompound()) : new NbtCompound());
         tag.put("Modifier", modifier.writeNbt(new NbtCompound()));
-        tag.putBoolean("HasRecipe", recipe != null);
+        tag.putBoolean("HasSession", session != null);
+        if (session != null) {
+            tag.put("RecipeSession", session.writeNbt(new NbtCompound()));
+        }
         tag.putString("Potion", Registries.POTION.getId(potion).toString());
     }
 
@@ -341,9 +344,14 @@ public class WitchCauldronBlockEntity extends BlockEntity {
     public void readNbt(NbtCompound tag) {
         super.readNbt(tag);
         inventory.readNbtList(tag.getList("Items", NbtElement.COMPOUND_TYPE));
-        recipe = tag.getBoolean("HasRecipe") ? ActiveBrewingRecipe.readNbt(tag.getCompound("Recipe")) : null;
         modifier = PotionModifier.readNbt(tag.getCompound("Modifier"));
         potion = Potion.byId(tag.getString("Potion"));
+
+        if (tag.getBoolean("HasSession")) {
+            session = ActiveBrewingSession.readNbt(tag.getCompound("RecipeSession"));
+        } else {
+            session = null;
+        }
     }
 
     @Override

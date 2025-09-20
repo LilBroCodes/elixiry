@@ -9,6 +9,7 @@ import org.lilbrocodes.elixiry.block.entity.WitchCauldronBlockEntity;
 import org.lilbrocodes.elixiry.recipe.brewing.BrewingRecipe;
 import org.lilbrocodes.elixiry.recipe.brewing.modifier.BrewingRecipeModifiers;
 import org.lilbrocodes.elixiry.recipe.brewing.modifier.BrewingRecipeModifiers.TimeModifier.TimeData;
+import org.lilbrocodes.elixiry.recipe.brewing.modifier.BrewingRecipeModifiers.WeatherModifier.WeatherData;
 import org.lilbrocodes.elixiry.recipe.brewing.step.BrewingRecipeSteps;
 import org.lilbrocodes.elixiry.util.BrewingRecipeManager;
 
@@ -63,6 +64,31 @@ public class ModBrewingRecipes {
                                 .time(60)
                                 .build())
                             .end()
+                        .build()
+        );
+
+        recipes.register(
+                Elixiry.identify("strength"),
+                BrewingRecipe.builder(Potions.STRENGTH)
+                        .heat(WitchCauldron.HeatState.HIGH)
+                        .base(Potions.AWKWARD)
+                        .modifiers()
+                        .push(BrewingRecipeModifiers.weather(new WeatherData(true, true))
+                                .length(20 * 30)
+                                .level(1)
+                                .build())
+                        .end()
+                        .steps()
+                        .push(BrewingRecipeSteps.item()
+                                .item(Ingredient.ofItems(Items.BLAZE_POWDER))
+                                .build())
+                        .push(BrewingRecipeSteps.stir()
+                                .stirDirections()
+                                .push(stirs(3))
+                                .end()
+                                .time(60)
+                                .build())
+                        .end()
                         .build()
         );
     }
