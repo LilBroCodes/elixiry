@@ -30,14 +30,17 @@ import net.minecraft.world.tick.TickPriority;
 import org.joml.Vector3f;
 import org.lilbrocodes.composer_reloaded.api.particle.ParticleManager;
 import org.lilbrocodes.elixiry.common.block.WitchCauldron;
+import org.lilbrocodes.elixiry.common.config.Configs;
 import org.lilbrocodes.elixiry.common.recipe.processing.ActiveBrewingSession;
 import org.lilbrocodes.elixiry.common.registry.ModBlockEntities;
 import org.lilbrocodes.elixiry.common.registry.ModBlockTags;
 import org.lilbrocodes.elixiry.common.registry.ModBlocks;
+import org.lilbrocodes.elixiry.common.util.Counter;
 import org.lilbrocodes.elixiry.common.util.PotionModifier;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -200,14 +203,17 @@ public class WitchCauldronBlockEntity extends BlockEntity {
     public int calculateArcanePower() {
         int power = 0;
         if (world == null) return power;
+        Counter<Block> entropyCounter = new Counter<>(Configs.SERVER.maximumArcaneDullness.get());
 
         for (BlockPos offset : POSSIBLE_ARCANE_PROVIDERS) {
             BlockPos checkPos = pos.add(offset);
             BlockState state = world.getBlockState(checkPos);
 
-            if (state.isIn(ModBlockTags.WEAK_ARCANE_BLOCKS)) {
+            if (state.isIn(ModBlockTags.WEAK_ARCANE_BLOCKS) && (!Configs.SERVER.arcaneDullness.get() || entropyCounter.valid(state.getBlock()))) {
+                entropyCounter.add(state.getBlock());
                 power += 1;
-            } else if (state.isIn(ModBlockTags.STRONG_ARCANE_BLOCKS)) {
+            } else if (state.isIn(ModBlockTags.STRONG_ARCANE_BLOCKS) && (!Configs.SERVER.arcaneDullness.get() || entropyCounter.valid(state.getBlock()))) {
+                entropyCounter.add(state.getBlock());
                 power += 5;
             }
         }

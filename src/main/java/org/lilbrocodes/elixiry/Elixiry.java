@@ -8,6 +8,7 @@ import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lilbrocodes.elixiry.common.commands.RegistryCommand;
+import org.lilbrocodes.elixiry.common.config.Configs;
 import org.lilbrocodes.elixiry.common.data.loader.BrewingRecipeLoader;
 import org.lilbrocodes.elixiry.common.registry.ModBlockEntities;
 import org.lilbrocodes.elixiry.common.registry.ModBlocks;
@@ -23,6 +24,7 @@ public class Elixiry implements ModInitializer {
         ModBlockEntities.initialize();
         ModItemGroups.initialize();
         ModBlocks.initialize();
+        Configs.initialize();
 
         CommandRegistrationCallback.EVENT.register(new RegistryCommand()::register);
         ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new BrewingRecipeLoader());

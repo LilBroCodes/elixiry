@@ -69,6 +69,10 @@ repositories {
             includeGroup "com.jamieswhiteshirt"
         }
     }
+    maven {
+        name = "FzzyMaven [Fzzy Config]"
+        url = "https://maven.fzzyhmstrs.me/"
+    }
 }
 
 dependencies {
@@ -78,6 +82,7 @@ dependencies {
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     modImplementation "org.lilbrocodes:composer-reloaded:${composer_version}"
+    modImplementation "me.fzzyhmstrs:fzzy_config:${project.fzzy_version}+${project.minecraft_version}"
 
     modImplementation "maven.modrinth:jade:${jade_version}+fabric"
 
