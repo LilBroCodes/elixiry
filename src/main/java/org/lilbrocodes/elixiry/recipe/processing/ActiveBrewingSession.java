@@ -24,7 +24,7 @@ public class ActiveBrewingSession {
 
     public static ActiveBrewingSession start(WitchCauldronBlockEntity be) {
         List<BrewingRecipe> possible =
-                BrewingRecipeManager.getInstance().getRecipesForConditions(be.potion, be.getHeat());
+                BrewingRecipeManager.getInstance().getRecipesForConditions(be.potion, be.getHeat(), be.modifier.bottle);
         if (!possible.isEmpty()) {
             return new ActiveBrewingSession(possible);
         }

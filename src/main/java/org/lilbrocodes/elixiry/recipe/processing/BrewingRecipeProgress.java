@@ -68,7 +68,7 @@ public class BrewingRecipeProgress {
     }
 
     public PotionModifier getModifier(World world, BlockPos pos) {
-        PotionModifier modifier = new PotionModifier(0, 0);
+        PotionModifier modifier = new PotionModifier(0, 0, recipe.resultBottle);
         recipe.modifiers.forEach(m -> m.apply(modifier, world, pos));
         return modifier;
     }

@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lilbrocodes.elixiry.block.entity.WitchCauldronBlockEntity;
 import org.lilbrocodes.elixiry.registry.ModBlockEntities;
+import org.lilbrocodes.elixiry.util.PotionBottle;
 import org.lilbrocodes.elixiry.util.PotionModifier;
 
 import java.util.Locale;
@@ -177,7 +178,7 @@ public class WitchCauldron extends BlockWithEntity {
         if (stack.getItem() == Items.POTION) {
             Potion potion = PotionUtil.getPotion(stack);
             if (!state.get(WitchCauldron.HAS_FLUID)) {
-                be.setPotion(potion, new PotionModifier(0, 0));
+                be.setPotion(potion, new PotionModifier(0, 0, PotionBottle.NORMAL));
                 world.setBlockState(pos, state.with(WitchCauldron.HAS_FLUID, true), Block.NOTIFY_ALL);
                 world.updateListeners(pos, state, state.with(WitchCauldron.HAS_FLUID, true), Block.NOTIFY_ALL);
 

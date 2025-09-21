@@ -26,12 +26,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockRenderView;
 import net.minecraft.world.World;
+import net.minecraft.world.tick.TickPriority;
 import org.joml.Vector3f;
 import org.lilbrocodes.composer_reloaded.api.particle.ParticleManager;
 import org.lilbrocodes.elixiry.block.WitchCauldron;
 import org.lilbrocodes.elixiry.recipe.processing.ActiveBrewingSession;
 import org.lilbrocodes.elixiry.registry.ModBlockEntities;
 import org.lilbrocodes.elixiry.registry.ModBlocks;
+import org.lilbrocodes.elixiry.util.PotionBottle;
 import org.lilbrocodes.elixiry.util.PotionModifier;
 
 import java.util.ArrayList;
@@ -76,7 +78,7 @@ public class WitchCauldronBlockEntity extends BlockEntity {
 
     public final List<ItemData> itemData = DefaultedList.ofSize(MAX_ITEMS, new ItemData(0, 0));
     public Potion potion = Potions.EMPTY;
-    public PotionModifier modifier = new PotionModifier(0, 0);
+    public PotionModifier modifier = new PotionModifier(0, 0, PotionBottle.NORMAL);
     public ActiveBrewingSession session;
 
     public float stickTicks = 0;
@@ -278,13 +280,13 @@ public class WitchCauldronBlockEntity extends BlockEntity {
 
     public void setPotion(Potion potion, PotionModifier modifier) {
         this.potion = potion;
-        this.modifier = modifier != null ? modifier : new PotionModifier(0, 0);
+        this.modifier = modifier != null ? modifier : new PotionModifier(0, 0, PotionBottle.NORMAL);
         markDirty();
     }
 
     public void clearPotion() {
         this.potion = Potions.EMPTY;
-        this.modifier = new PotionModifier(0, 0);
+        this.modifier = new PotionModifier(0, 0, PotionBottle.NORMAL);
         markDirty();
     }
 
@@ -293,7 +295,7 @@ public class WitchCauldronBlockEntity extends BlockEntity {
     }
 
     public ItemStack takePotion() {
-        ItemStack stack = new ItemStack(Items.POTION);
+        ItemStack stack = new ItemStack(modifier.bottle.getItem());
         PotionUtil.setCustomPotionEffects(stack, getEffects());
         PotionUtil.setPotion(stack, potion);
         stack.setSubNbt("ElixiryPotion", NbtByte.of(true));
@@ -359,7 +361,7 @@ public class WitchCauldronBlockEntity extends BlockEntity {
         super.markDirty();
         if (world != null && !world.isClient) {
             world.updateListeners(pos, world.getBlockState(pos), world.getBlockState(pos), Block.NOTIFY_ALL);
-            world.getChunk(pos).markBlockForPostProcessing(pos);
+            world.scheduleBlockTick(pos, ModBlocks.WITCH_CAULDRON.block, 0, TickPriority.NORMAL);
         }
     }
 

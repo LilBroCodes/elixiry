@@ -1,7 +1,6 @@
 package org.lilbrocodes.elixiry.util;
 
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.potion.Potion;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
@@ -40,10 +39,10 @@ public class BrewingRecipeManager extends AbstractPseudoRegistry<BrewingRecipe> 
         return INSTANCE;
     }
 
-    public List<BrewingRecipe> getRecipesForConditions(Potion input, WitchCauldron.HeatState heat) {
+    public List<BrewingRecipe> getRecipesForConditions(Potion input, WitchCauldron.HeatState heat, PotionBottle bottle) {
         List<BrewingRecipe> matches = new ArrayList<>();
         for (BrewingRecipe recipe : RECIPES.values()) {
-            if (recipe.base == input && recipe.heat == heat) {
+            if (recipe.base == input && recipe.heat == heat && recipe.inputBottle == bottle) {
                 matches.add(recipe);
             }
         }

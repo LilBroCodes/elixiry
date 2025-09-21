@@ -1,6 +1,7 @@
 package org.lilbrocodes.elixiry.recipe.brewing.modifier;
 
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -10,7 +11,7 @@ import org.lilbrocodes.elixiry.util.IntClamper;
 import java.util.Objects;
 
 public class BrewingRecipeModifiers {
-    public static BrewingRecipeModifier.Builder<Biome, BiomeModifier> biome(Biome biome) {
+    public static BrewingRecipeModifier.Builder<RegistryKey<Biome>, BiomeModifier> biome(RegistryKey<Biome> biome) {
         return BrewingRecipeModifier.builder(biome,
                 b -> new BiomeModifier(b.data(), b.length(), b.level(), b.required()));
     }
@@ -30,16 +31,15 @@ public class BrewingRecipeModifiers {
                 b -> new MoonPhaseModifier(b.data(), b.length(), b.level(), b.required()));
     }
 
-    public static class BiomeModifier extends BrewingRecipeModifier<Biome, BiomeModifier> {
-        private BiomeModifier(Biome biome, int length, int level, boolean required) {
+    public static class BiomeModifier extends BrewingRecipeModifier<RegistryKey<Biome>, BiomeModifier> {
+        private BiomeModifier(RegistryKey<Biome> biome, int length, int level, boolean required) {
             super(biome, length, level, required);
         }
 
         @Override
         public boolean shouldApply(World world, BlockPos pos) {
-            Registry<Biome> biomeRegistry = world.getRegistryManager().get(RegistryKeys.BIOME);
-            Biome currentBiome = world.getBiome(pos).value();
-            return Objects.equals(biomeRegistry.getId(currentBiome), biomeRegistry.getId(this.data));
+            RegistryKey<Biome> currentBiome = world.getBiome(pos).getKey().orElse(null);
+            return currentBiome != null && Objects.equals(currentBiome, data);
         }
     }
 
@@ -50,7 +50,7 @@ public class BrewingRecipeModifiers {
 
         @Override
         public boolean shouldApply(World world, BlockPos pos) {
-            boolean bl1 = !data.rain || world.hasRain(pos);
+            boolean bl1 = !data.rain || world.hasRain(pos.up());
             boolean bl2 = !data.thunder || world.isThundering();
             return bl1 && bl2;
         }
@@ -78,7 +78,7 @@ public class BrewingRecipeModifiers {
 
         @Override
         public boolean shouldApply(World world, BlockPos pos) {
-            return world.getMoonPhase() == data.value();
+            return world.getMoonPhase() == data.build();
         }
     }
 }

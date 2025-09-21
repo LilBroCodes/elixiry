@@ -10,7 +10,10 @@ import org.lilbrocodes.elixiry.block.WitchCauldron;
 import org.lilbrocodes.elixiry.recipe.brewing.modifier.BrewingRecipeModifier;
 import org.lilbrocodes.elixiry.recipe.brewing.step.BrewingRecipeStep;
 import org.lilbrocodes.elixiry.recipe.brewing.step.BrewingRecipeSteps;
+import org.lilbrocodes.elixiry.util.IntClamper;
 import org.lilbrocodes.elixiry.util.ListBuilder;
+import org.lilbrocodes.elixiry.util.NotAllFieldsFilledException;
+import org.lilbrocodes.elixiry.util.PotionBottle;
 
 import java.util.List;
 import java.util.Map;
@@ -22,13 +25,19 @@ public class BrewingRecipe {
     public final Potion result;
     public final List<BrewingRecipeStep<?>> steps;
     public final List<BrewingRecipeModifier<?, ?>> modifiers;
+    public final PotionBottle inputBottle;
+    public final PotionBottle resultBottle;
+    public final int minimumArcaneEnergy;
 
-    private BrewingRecipe(WitchCauldron.HeatState heat, Potion base, Potion result, List<BrewingRecipeStep<?>> steps, List<BrewingRecipeModifier<?, ?>> modifiers) {
+    private BrewingRecipe(WitchCauldron.HeatState heat, Potion base, Potion result, List<BrewingRecipeStep<?>> steps, List<BrewingRecipeModifier<?, ?>> modifiers, PotionBottle inputBottle, PotionBottle resultBottle, int minimumArcaneEnergy) {
         this.heat = heat;
         this.base = base;
         this.result = result;
         this.steps = steps;
         this.modifiers = modifiers;
+        this.inputBottle = inputBottle;
+        this.resultBottle = resultBottle;
+        this.minimumArcaneEnergy = minimumArcaneEnergy;
     }
 
     public static Builder builder(Potion result) {
@@ -38,6 +47,9 @@ public class BrewingRecipe {
     public static class Builder {
         private WitchCauldron.HeatState heat = WitchCauldron.HeatState.NONE;
         private Potion base = Potions.EMPTY;
+        private PotionBottle inputBottle = PotionBottle.NORMAL;
+        private PotionBottle resultBottle = PotionBottle.NORMAL;
+        private IntClamper.ValidatedInt<Builder> energy;
         private final Potion result;
 
         private final ListBuilder<Builder, BrewingRecipeStep<?>> steps = new ListBuilder<>(this);
@@ -45,6 +57,16 @@ public class BrewingRecipe {
 
         private Builder(Potion result) {
             this.result = result;
+        }
+
+        public Builder inputBottle(PotionBottle bottle) {
+            this.inputBottle = bottle;
+            return this;
+        }
+
+        public Builder resultBottle(PotionBottle bottle) {
+            this.resultBottle = bottle;
+            return this;
         }
 
         public Builder heat(WitchCauldron.HeatState heat) {
@@ -57,6 +79,11 @@ public class BrewingRecipe {
             return this;
         }
 
+        public Builder energy(IntClamper.ValidatedInt<Builder> energy) {
+            this.energy = energy;
+            return this;
+        }
+
         public ListBuilder<Builder, BrewingRecipeStep<?>> steps() {
             return steps;
         }
@@ -66,7 +93,10 @@ public class BrewingRecipe {
         }
 
         public BrewingRecipe build() {
-            return new BrewingRecipe(heat, base, result, steps.build(), modifiers.build());
+            if (heat == null || base == null || inputBottle == null || resultBottle == null || energy == null || result == null) {
+                throw new NotAllFieldsFilledException();
+            }
+            return new BrewingRecipe(heat, base, result, steps.build(), modifiers.build(), inputBottle, resultBottle, energy.build());
         }
     }
 
