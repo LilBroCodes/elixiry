@@ -1,0 +1,54 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:wither_skeleton_skull",
+    "minecraft:wither_skeleton_wall_skull",
+    "minecraft:wither_rose",
+    "minecraft:potted_wither_rose",
+    "minecraft:dragon_egg",
+    {
+      "id": "amarite:amarite_cluster",
+      "required": false
+    },
+    {
+      "id": "amarite:budding_amarite",
+      "required": false
+    },
+    {
+      "id": "amarite:amarite_block",
+      "required": false
+    },
+    {
+      "id": "amarite:amarite_spark",
+      "required": false
+    },
+    {
+      "id": "amarite:fresh_amarite_bud",
+      "required": false
+    },
+    {
+      "id": "amarite:partial_amarite_bud",
+      "required": false
+    },
+    {
+      "id": "amendments:skull_candle_soul",
+      "required": false
+    },
+    {
+      "id": "amendments:skull_candle_soul_wall",
+      "required": false
+    },
+    {
+      "id": "spelunkery:portal_fluid",
+      "required": false
+    },
+    {
+      "id": "spelunkery:portal_cauldron",
+      "required": false
+    },
+    {
+      "id": "create_dd:shimmer",
+      "required": false
+    }
+  ]
+}

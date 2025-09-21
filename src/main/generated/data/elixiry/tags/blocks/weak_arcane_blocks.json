@@ -1,0 +1,42 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#minecraft:candles",
+      "required": false
+    },
+    "minecraft:skeleton_skull",
+    "minecraft:skeleton_wall_skull",
+    "minecraft:soul_lantern",
+    "minecraft:soul_torch",
+    "minecraft:amethyst_block",
+    "minecraft:soul_campfire",
+    "minecraft:soul_fire",
+    "minecraft:small_amethyst_bud",
+    "minecraft:medium_amethyst_bud",
+    "minecraft:soul_wall_torch",
+    "minecraft:large_amethyst_bud",
+    "minecraft:amethyst_cluster",
+    "minecraft:budding_amethyst",
+    {
+      "id": "amendments:skull_pile",
+      "required": false
+    },
+    {
+      "id": "handcrafted:stackable_book",
+      "required": false
+    },
+    {
+      "id": "amendments:skull_candle",
+      "required": false
+    },
+    {
+      "id": "amendments:skull_candle_wall",
+      "required": false
+    },
+    {
+      "id": "#supplementaries:candle_holders",
+      "required": false
+    }
+  ]
+}

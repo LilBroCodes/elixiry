@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class PotionUtilMixin {
     @ModifyExpressionValue(method = "getPotionEffects(Lnet/minecraft/nbt/NbtCompound;)Ljava/util/List;", at = @At(value = "INVOKE", target = "Lnet/minecraft/potion/PotionUtil;getPotion(Lnet/minecraft/nbt/NbtCompound;)Lnet/minecraft/potion/Potion;"))
     private static Potion elixiry$removeDefaultEffects(Potion original, @Local(argsOnly = true) NbtCompound compound) {
-        if (compound.getBoolean("ElixiryPotion")) return Potions.EMPTY;
+        if (compound != null && compound.getBoolean("ElixiryPotion")) return Potions.EMPTY;
         return original;
     }
 }

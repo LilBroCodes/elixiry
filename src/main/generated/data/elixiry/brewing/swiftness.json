@@ -1,0 +1,32 @@
+{
+  "base": "minecraft:awkward",
+  "energy": 12,
+  "heat": "high",
+  "modifiers": [
+    {
+      "type": "biome",
+      "biome": "minecraft:desert",
+      "length": 1200,
+      "level": 1,
+      "required": false
+    }
+  ],
+  "result": "minecraft:swiftness",
+  "steps": [
+    {
+      "type": "item",
+      "ingredient": {
+        "item": "minecraft:sugar"
+      },
+      "time": -1
+    },
+    {
+      "type": "stir",
+      "directions": [
+        "right",
+        "left"
+      ],
+      "time": 60
+    }
+  ]
+}

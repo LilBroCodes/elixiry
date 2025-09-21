@@ -18,6 +18,9 @@
     ],
     "main": [
       "org.lilbrocodes.elixiry.Elixiry"
+    ],
+    "jade": [
+      "org.lilbrocodes.elixiry.integration.jade.ElixiryJadePlugin"
     ]
   },
   "mixins": [

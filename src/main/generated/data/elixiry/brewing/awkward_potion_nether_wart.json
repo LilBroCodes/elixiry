@@ -1,0 +1,24 @@
+{
+  "base": "minecraft:water",
+  "energy": 0,
+  "heat": "high",
+  "modifiers": [],
+  "result": "minecraft:awkward",
+  "steps": [
+    {
+      "type": "item",
+      "ingredient": {
+        "item": "minecraft:nether_wart"
+      },
+      "time": -1
+    },
+    {
+      "type": "stir",
+      "directions": [
+        "left",
+        "right"
+      ],
+      "time": 60
+    }
+  ]
+}

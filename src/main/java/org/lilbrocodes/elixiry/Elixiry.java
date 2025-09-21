@@ -5,25 +5,27 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
-import org.lilbrocodes.elixiry.commands.RegistryCommand;
-import org.lilbrocodes.elixiry.registry.ModBrewingRecipes;
-import org.lilbrocodes.elixiry.registry.ModBlockEntities;
-import org.lilbrocodes.elixiry.registry.ModBlocks;
-import org.lilbrocodes.elixiry.registry.ModItemGroups;
-import org.lilbrocodes.elixiry.util.BrewingRecipeManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.lilbrocodes.elixiry.common.commands.RegistryCommand;
+import org.lilbrocodes.elixiry.common.data.loader.BrewingRecipeLoader;
+import org.lilbrocodes.elixiry.common.registry.ModBlockEntities;
+import org.lilbrocodes.elixiry.common.registry.ModBlocks;
+import org.lilbrocodes.elixiry.common.registry.ModItemGroups;
 
 public class Elixiry implements ModInitializer {
     public static final String MOD_ID = "elixiry";
+    public static final Logger LOGGER = LogManager.getLogger(Elixiry.class);
+    public static final boolean DEBUG = true;
 
     @Override
     public void onInitialize() {
         ModBlockEntities.initialize();
-        ModBrewingRecipes.initialize();
         ModItemGroups.initialize();
         ModBlocks.initialize();
 
         CommandRegistrationCallback.EVENT.register(new RegistryCommand()::register);
-        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(BrewingRecipeManager.getInstance());
+        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new BrewingRecipeLoader());
     }
 
     public static Identifier identify(String path) {

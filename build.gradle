@@ -18,12 +18,56 @@ fabricApi {
 
 repositories {
     maven {
+        name "Modrinth [Jade|Lodestone]"
+        url "https://api.modrinth.com/maven"
+    }
+    maven {
+        name "Progwml6's maven [JEI]"
+        url "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
+        name "Jared's maven [JEI|Lodestone]"
+        url "https://maven.blamejared.com/"
+    }
+    maven {
+        name "ModMaven [JEI]"
+        url "https://modmaven.dev"
+    }
+
+    maven {
+        name "Devos [Lodestone]"
+        url "https://mvn.devos.one/releases/"
+    }
+    maven {
+        name "IllusiveC [Lodestone]"
+        url "https://maven.theillusivec4.top/"
+    }
+    maven {
+        name "JamiesWhiteShirt [Lodestone]"
+        url "https://maven.jamieswhiteshirt.com/libs-release"
+    }
+    maven {
+        name "Ladysnake [Lodestone]"
+        url 'https://maven.ladysnake.org/releases'
+    }
+    maven {
+        name "TerraformersMC [Lodestone]"
+        url "https://maven.terraformersmc.com/"
+    }
+    maven {
         name = "Ladysnake [Composer]"
         url = "https://maven.ladysnake.org/releases"
     }
     maven {
         name = "Composer Maven"
         url "https://dl.cloudsmith.io/public/lilbrocodes/composer-reloaded/maven/"
+    }
+    maven {
+        name = "Jamie's White Shirt [REA]"
+        url "https://maven.jamieswhiteshirt.com/libs-release"
+        content {
+            includeGroup "com.jamieswhiteshirt"
+        }
     }
 }
 
@@ -35,8 +79,21 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     modImplementation "org.lilbrocodes:composer-reloaded:${composer_version}"
 
-    // Composer
+    modImplementation "maven.modrinth:jade:${jade_version}+fabric"
+
+    modCompileOnly "mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}"
+
+//    modImplementation "team.lodestar.lodestone:lodestone:${minecraft_version}-${lodestone_version}-fabric"
     modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-api:${cca_version}"
+//    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${cca_version}"
+//    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${cca_version}"
+//    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-world:${cca_version}"
+//
+//    modImplementation "dev.emi:trinkets:${trinkets_version}"
+//    for (String module in port_lib_modules.split(",")) {
+//        modImplementation "io.github.fabricators_of_create.Porting-Lib:$module:$port_lib_version"
+//    }
+    modImplementation "com.jamieswhiteshirt:reach-entity-attributes:${rea_version}"
 }
 
 processResources {

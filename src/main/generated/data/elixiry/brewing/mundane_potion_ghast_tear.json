@@ -1,0 +1,24 @@
+{
+  "base": "minecraft:water",
+  "energy": 0,
+  "heat": "high",
+  "modifiers": [],
+  "result": "minecraft:mundane",
+  "steps": [
+    {
+      "type": "item",
+      "ingredient": {
+        "item": "minecraft:ghast_tear"
+      },
+      "time": -1
+    },
+    {
+      "type": "stir",
+      "directions": [
+        "right",
+        "left"
+      ],
+      "time": 60
+    }
+  ]
+}

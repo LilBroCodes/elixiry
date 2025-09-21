@@ -1,0 +1,34 @@
+{
+  "base": "minecraft:awkward",
+  "energy": 10,
+  "heat": "high",
+  "modifiers": [
+    {
+      "type": "time",
+      "length": 600,
+      "level": 0,
+      "maxTime": 22999,
+      "minTime": 13000,
+      "required": false
+    }
+  ],
+  "result": "minecraft:night_vision",
+  "steps": [
+    {
+      "type": "item",
+      "ingredient": {
+        "item": "minecraft:golden_carrot"
+      },
+      "time": -1
+    },
+    {
+      "type": "stir",
+      "directions": [
+        "right",
+        "right",
+        "right"
+      ],
+      "time": 60
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "base": "minecraft:awkward",
+  "energy": 15,
+  "heat": "high",
+  "modifiers": [
+    {
+      "type": "weather",
+      "length": 600,
+      "level": 1,
+      "rain": true,
+      "required": false,
+      "thunder": true
+    }
+  ],
+  "result": "minecraft:strength",
+  "steps": [
+    {
+      "type": "item",
+      "ingredient": {
+        "item": "minecraft:blaze_powder"
+      },
+      "time": -1
+    },
+    {
+      "type": "stir",
+      "directions": [
+        "right",
+        "left",
+        "right"
+      ],
+      "time": 60
+    }
+  ]
+}
