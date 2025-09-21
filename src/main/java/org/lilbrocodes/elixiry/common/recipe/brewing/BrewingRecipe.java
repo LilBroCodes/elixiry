@@ -2,28 +2,25 @@ package org.lilbrocodes.elixiry.common.recipe.brewing;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.minecraft.data.DataProvider;
-import net.minecraft.data.DataWriter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.Potions;
 import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
 import org.lilbrocodes.elixiry.common.block.WitchCauldron;
 import org.lilbrocodes.elixiry.common.recipe.brewing.modifier.BrewingRecipeModifier;
 import org.lilbrocodes.elixiry.common.recipe.brewing.step.BrewingRecipeStep;
 import org.lilbrocodes.elixiry.common.recipe.brewing.step.BrewingRecipeSteps;
+import org.lilbrocodes.elixiry.common.recipe.common.SerializableRecipe;
 import org.lilbrocodes.elixiry.common.util.IntClamper;
 import org.lilbrocodes.elixiry.common.util.ListBuilder;
 import org.lilbrocodes.elixiry.common.util.NotAllFieldsFilledException;
 
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.CompletableFuture;
 
-public class BrewingRecipe {
+@SuppressWarnings("ClassCanBeRecord")
+public class BrewingRecipe implements SerializableRecipe {
     public final WitchCauldron.HeatState heat;
     public final Potion base;
     public final Potion result;
@@ -111,12 +108,9 @@ public class BrewingRecipe {
         return root;
     }
 
-    public CompletableFuture<?> save(DataWriter writer, Path root, Identifier id) {
-        return CompletableFuture.runAsync(() -> {
-            JsonObject json = this.toJson();
-            Path path = root.resolve("data/" + id.getNamespace() + "/brewing/" + id.getPath() + ".json");
-            DataProvider.writeToPath(writer, json, path);
-        });
+    @Override
+    public String getSubPath() {
+        return "brewing";
     }
 
     public boolean hasItemStep(Item item) {

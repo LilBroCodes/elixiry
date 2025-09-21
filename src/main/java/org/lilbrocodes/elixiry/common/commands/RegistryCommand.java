@@ -76,7 +76,8 @@ public class RegistryCommand extends CommandUtil {
 
     private CompletableFuture<Suggestions> registries(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder) {
         List.of(
-                "brewing_recipes"
+                "brewing_recipes",
+                "dumping_recipes"
         ).forEach(builder::suggest);
         return builder.buildFuture();
     }

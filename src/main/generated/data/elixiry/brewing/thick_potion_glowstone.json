@@ -3,12 +3,12 @@
   "energy": 0,
   "heat": "high",
   "modifiers": [],
-  "result": "minecraft:mundane",
+  "result": "minecraft:thick",
   "steps": [
     {
       "type": "item",
       "ingredient": {
-        "item": "minecraft:ghast_tear"
+        "item": "minecraft:glowstone_dust"
       },
       "time": -1
     },
@@ -16,7 +16,7 @@
       "type": "stir",
       "directions": [
         "right",
-        "right"
+        "left"
       ],
       "time": 60
     }

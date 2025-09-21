@@ -113,7 +113,7 @@ public class ElixiryBrewingRecipeProvider implements DataProvider {
                                 .build())
                         .push(BrewingRecipeSteps.stir()
                                 .stirDirections()
-                                .push(stirs(2))
+                                .push(stirs(3))
                                 .end()
                                 .time(60)
                                 .build())
@@ -150,7 +150,7 @@ public class ElixiryBrewingRecipeProvider implements DataProvider {
 
         addBasicRecipes(writer);
 
-        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+        return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
     }
 
     /**
@@ -174,7 +174,7 @@ public class ElixiryBrewingRecipeProvider implements DataProvider {
 
     @Override
     public String getName() {
-        return "Elixiry Brewing Recipes";
+        return "Elixiry brewing recipes";
     }
 
     public static WitchCauldronBlockEntity.StirDirection[] stirs(int count) {

@@ -3,10 +3,7 @@ package org.lilbrocodes.elixiry.common.data;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import org.lilbrocodes.elixiry.common.data.assets.ElixiryLanguageProvider;
-import org.lilbrocodes.elixiry.common.data.data.ElixiryBlockTagProvider;
-import org.lilbrocodes.elixiry.common.data.data.ElixiryBrewingRecipeProvider;
-import org.lilbrocodes.elixiry.common.data.data.ElixiryLootTableProvider;
-import org.lilbrocodes.elixiry.common.data.data.ElixiryRecipeProvider;
+import org.lilbrocodes.elixiry.common.data.data.*;
 
 public class ElixiryDataGenerator implements DataGeneratorEntrypoint {
 
@@ -20,6 +17,7 @@ public class ElixiryDataGenerator implements DataGeneratorEntrypoint {
         // data
         pack.addProvider(ElixiryBlockTagProvider::new);
         pack.addProvider(ElixiryBrewingRecipeProvider::new);
+        pack.addProvider(ElixiryDumpingRecipeProvider::new);
         pack.addProvider(ElixiryLootTableProvider::new);
         pack.addProvider(ElixiryRecipeProvider::new);
     }

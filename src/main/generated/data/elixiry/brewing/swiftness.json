@@ -23,8 +23,8 @@
     {
       "type": "stir",
       "directions": [
-        "right",
-        "left"
+        "left",
+        "right"
       ],
       "time": 60
     }

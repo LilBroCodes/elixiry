@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.color.world.BiomeColors;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
@@ -21,6 +22,8 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.potion.Potions;
 import net.minecraft.registry.Registries;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -31,6 +34,8 @@ import org.joml.Vector3f;
 import org.lilbrocodes.composer_reloaded.api.particle.ParticleManager;
 import org.lilbrocodes.elixiry.common.block.WitchCauldron;
 import org.lilbrocodes.elixiry.common.config.Configs;
+import org.lilbrocodes.elixiry.common.recipe.dumping.DumpingRecipe;
+import org.lilbrocodes.elixiry.common.recipe.management.DumpingRecipeManager;
 import org.lilbrocodes.elixiry.common.recipe.processing.ActiveBrewingSession;
 import org.lilbrocodes.elixiry.common.registry.ModBlockEntities;
 import org.lilbrocodes.elixiry.common.registry.ModBlockTags;
@@ -38,10 +43,7 @@ import org.lilbrocodes.elixiry.common.registry.ModBlocks;
 import org.lilbrocodes.elixiry.common.util.Counter;
 import org.lilbrocodes.elixiry.common.util.PotionModifier;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class WitchCauldronBlockEntity extends BlockEntity {
@@ -52,6 +54,7 @@ public class WitchCauldronBlockEntity extends BlockEntity {
 
     public static final int MAX_ITEMS = 4;
     public static final int MAX_POWER = 48;
+    public static final int MAX_DUMPS = 16;
     public static final List<BlockPos> POSSIBLE_ARCANE_PROVIDERS = BlockPos.stream(-2, -2, -2, 2, 2, 2)
             .map(BlockPos::toImmutable)
             .toList();
@@ -88,6 +91,7 @@ public class WitchCauldronBlockEntity extends BlockEntity {
     public Potion potion = Potions.EMPTY;
     public PotionModifier modifier = new PotionModifier(0, 0);
     public ActiveBrewingSession session;
+    public int dumps = 0;
 
     public float stickTicks = 0;
     public float stickRotation = 0;
@@ -193,11 +197,39 @@ public class WitchCauldronBlockEntity extends BlockEntity {
         return potion == Potions.WATER || potion == Potions.EMPTY;
     }
 
+    public boolean stateValid() {
+        return getCachedState().getBlock() == ModBlocks.WITCH_CAULDRON.block;
+    }
+
+    public boolean hasFluid() {
+        return stateValid() && getCachedState().get(WitchCauldron.HAS_FLUID);
+    }
+
+    public void setFluid(boolean value) {
+        if (world == null || !stateValid()) return;
+        BlockState state = getCachedState().with(WitchCauldron.HAS_FLUID, value);
+        world.setBlockState(pos, state, Block.NOTIFY_ALL);
+        markDirty();
+    }
+
     public WitchCauldron.HeatState getHeat() {
-        if (world == null) return WitchCauldron.HeatState.NONE;
-        BlockState state = world.getBlockState(pos);
-        if (state.getBlock() != ModBlocks.WITCH_CAULDRON.block) return WitchCauldron.HeatState.NONE;
-        else return state.get(WitchCauldron.HEAT_STATE);
+        if (!stateValid()) return WitchCauldron.HeatState.NONE;
+        return getCachedState().get(WitchCauldron.HEAT_STATE);
+    }
+
+    public void setHeat(WitchCauldron.HeatState heat) {
+        if (world == null || !stateValid()) return;
+        BlockState state = getCachedState().with(WitchCauldron.HEAT_STATE, heat);
+        world.setBlockState(pos, state, Block.NOTIFY_ALL);
+        markDirty();
+    }
+
+    public boolean isHeated() {
+        return getHeat() != WitchCauldron.HeatState.NONE;
+    }
+
+    public void toggleFluid() {
+        setFluid(!hasFluid());
     }
 
     public int calculateArcanePower() {
@@ -221,6 +253,12 @@ public class WitchCauldronBlockEntity extends BlockEntity {
         return Math.min(power, MAX_POWER);
     }
 
+    public int maxDumps() {
+        return hasFluid() ?
+                MAX_DUMPS :
+                0;
+    }
+
     public void tick() {
         if (stickTicks > 0) {
             stickTicks--;
@@ -240,11 +278,7 @@ public class WitchCauldronBlockEntity extends BlockEntity {
 
         if (world != null) {
             if (world.isClient) {
-                BlockState state = world.getBlockState(pos);
-                boolean hasFluid = false;
-                if (state.getBlock() == ModBlocks.WITCH_CAULDRON.block) {
-                    hasFluid = state.get(WitchCauldron.HAS_FLUID);
-                }
+                boolean hasFluid = hasFluid();
 
                 for (ItemData data : itemData) {
                     data.tick(hasFluid);
@@ -277,7 +311,7 @@ public class WitchCauldronBlockEntity extends BlockEntity {
 
     public void spawnParticleInside(ParticleEffect effect, int onOffset) {
         if (world == null) return;
-        if (world.getBlockState(pos).get(WitchCauldron.HAS_FLUID) && world.getTime() % onOffset == 0) {
+        if (hasFluid() && world.getTime() % onOffset == 0) {
             Vec3d center = Vec3d.ofCenter(pos).add(
                     random.nextFloat(0.5f) - 0.25,
                     0.4,
@@ -300,14 +334,68 @@ public class WitchCauldronBlockEntity extends BlockEntity {
     }
 
     public ItemStack addItem(ItemStack stack) {
-        ItemStack intermediary = this.inventory.addStack(stack.copy());
-        if (session != null && session.addItem(stack)) explode();
-        markDirty();
-        return intermediary;
+        Optional<DumpingRecipe> possibleRecipe = DumpingRecipeManager.getInstance()
+                .getRecipeForConditions(potion, stack.copy());
+
+        if (possibleRecipe.isEmpty()) {
+            ItemStack intermediary = this.inventory.addStack(stack.copy());
+            if (session != null && session.addItem(stack)) explode();
+            markDirty();
+            return intermediary;
+        } else {
+            DumpingRecipe recipe = possibleRecipe.get();
+            ItemStack remaining = stack.copy();
+            ItemStack outputTemplate = setPotion(recipe.output.copy());
+
+            int processed = 0;
+
+            while (!remaining.isEmpty() && dumps < maxDumps()) {
+                remaining.decrement(1);
+                dumps++;
+                processed++;
+
+                if (recipe.fluidUsage > 0 && dumps + recipe.fluidUsage > maxDumps()) {
+                    break;
+                }
+            }
+
+            if (processed > 0) {
+                if (world != null && !world.isClient) {
+                    int toDrop = processed * outputTemplate.getCount();
+                    while (toDrop > 0) {
+                        int dropCount = Math.min(toDrop, outputTemplate.getMaxCount());
+                        ItemStack dropStack = outputTemplate.copy();
+                        dropStack.setCount(dropCount);
+                        dropStack(dropStack);
+                        toDrop -= dropCount;
+                    }
+                }
+
+                if (dumps == maxDumps()) hardReset();
+                markDirty();
+
+                if (!remaining.isEmpty()) {
+                    dropStack(remaining);
+                }
+                return ItemStack.EMPTY;
+            } else {
+                markDirty();
+                return remaining;
+            }
+        }
     }
 
-    public boolean canTakePotion() {
-        return session == null;
+
+    private void dropStack(ItemStack stack) {
+        if (world == null) return;
+        ItemEntity entity = new ItemEntity(
+                world,
+                pos.getX() + 0.5,
+                pos.getY() + 1.0,
+                pos.getZ() + 0.5,
+                stack
+        );
+        world.spawnEntity(entity);
     }
 
     public void setPotion(Potion potion, PotionModifier modifier) {
@@ -322,10 +410,19 @@ public class WitchCauldronBlockEntity extends BlockEntity {
         markDirty();
     }
 
+    public void hardReset() {
+        softReset();
+        if (world != null) {
+            setFluid(false);
+            world.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.2f, 1.0f);
+        }
+    }
+
     public void softReset() {
         clearPotion();
         this.inventory.clear();
         this.session = null;
+        this.dumps = 0;
 
         markDirty();
     }
@@ -334,14 +431,18 @@ public class WitchCauldronBlockEntity extends BlockEntity {
         return potion != null && potion != Potions.EMPTY;
     }
 
-    public ItemStack takePotion() {
-        ItemStack stack = new ItemStack(Items.POTION);
+    public ItemStack setPotion(ItemStack stack) {
         PotionUtil.setCustomPotionEffects(stack, getEffects());
         PotionUtil.setPotion(stack, potion);
         stack.setSubNbt("ElixiryPotion", NbtByte.of(true));
+        return stack;
+    }
+
+    public ItemStack takePotion() {
+        ItemStack stack = setPotion(new ItemStack(Items.POTION));
 
         softReset();
-        if (world != null && world.getBlockState(pos).getBlock() == ModBlocks.WITCH_CAULDRON.block) world.setBlockState(pos, world.getBlockState(pos).with(WitchCauldron.HAS_FLUID, false), 3);
+        setFluid(false);
 
         markDirty();
         return stack;
@@ -361,6 +462,7 @@ public class WitchCauldronBlockEntity extends BlockEntity {
 
     public void stir(StirDirection direction) {
         if (session != null && session.stir(direction)) explode();
+        if (world != null && hasFluid()) world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_SWIM, SoundCategory.BLOCKS, 0.01f, 1.0f);
         markDirty();
     }
 
@@ -379,6 +481,7 @@ public class WitchCauldronBlockEntity extends BlockEntity {
             tag.put("RecipeSession", session.writeNbt(new NbtCompound()));
         }
         tag.putString("Potion", Registries.POTION.getId(potion).toString());
+        tag.putInt("Dumps", dumps);
     }
 
     @Override
@@ -393,13 +496,15 @@ public class WitchCauldronBlockEntity extends BlockEntity {
         } else {
             session = null;
         }
+
+        dumps = tag.getInt("Dumps");
     }
 
     @Override
     public void markDirty() {
         super.markDirty();
         if (world != null && !world.isClient) {
-            world.updateListeners(pos, world.getBlockState(pos), world.getBlockState(pos), Block.NOTIFY_ALL);
+            world.updateListeners(pos, getCachedState(), getCachedState(), Block.NOTIFY_ALL);
             world.scheduleBlockTick(pos, ModBlocks.WITCH_CAULDRON.block, 0, TickPriority.EXTREMELY_HIGH);
         }
     }

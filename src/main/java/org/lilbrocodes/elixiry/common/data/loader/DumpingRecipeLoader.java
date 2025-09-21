@@ -7,15 +7,15 @@ import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import org.lilbrocodes.elixiry.Elixiry;
-import org.lilbrocodes.elixiry.common.data.loader.json.BrewingRecipeJsonHelper;
-import org.lilbrocodes.elixiry.common.recipe.brewing.BrewingRecipe;
-import org.lilbrocodes.elixiry.common.recipe.management.BrewingRecipeManager;
+import org.lilbrocodes.elixiry.common.data.loader.json.DumpingRecipeJsonHelper;
+import org.lilbrocodes.elixiry.common.recipe.dumping.DumpingRecipe;
+import org.lilbrocodes.elixiry.common.recipe.management.DumpingRecipeManager;
 
 import java.io.InputStreamReader;
 import java.util.Map;
 
-public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListener {
-    public static final Identifier ID = Elixiry.identify("brewing_recipes");
+public class DumpingRecipeLoader implements SimpleSynchronousResourceReloadListener {
+    public static final Identifier ID = Elixiry.identify("dumping_recipes");
 
     @Override
     public Identifier getFabricId() {
@@ -24,23 +24,20 @@ public class BrewingRecipeLoader implements SimpleSynchronousResourceReloadListe
 
     @Override
     public void reload(ResourceManager manager) {
-        BrewingRecipeManager recipes = BrewingRecipeManager.getInstance();
+        DumpingRecipeManager recipes = DumpingRecipeManager.getInstance();
         recipes.clear();
 
-        var resources = manager.findResources("brewing", path -> path.getPath().endsWith(".json"));
+        var resources = manager.findResources("dumping", path -> path.getPath().endsWith(".json"));
 
         for (Map.Entry<Identifier, Resource> entry : resources.entrySet()) {
             Identifier id = entry.getKey();
             try (var reader = new InputStreamReader(entry.getValue().getInputStream())) {
                 JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
-                BrewingRecipe recipe = BrewingRecipeJsonHelper.fromJson(id, json);
+                DumpingRecipe recipe = DumpingRecipeJsonHelper.fromJson(json);
                 recipes.register(id, recipe);
             } catch (Exception e) {
                 Elixiry.LOGGER.error("Failed to load brewing recipe {}", id, e);
             }
         }
-
-        recipes.warnOfMissingEntries();
     }
 }
-

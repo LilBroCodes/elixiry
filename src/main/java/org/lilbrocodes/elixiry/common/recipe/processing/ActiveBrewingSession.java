@@ -6,7 +6,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import org.lilbrocodes.elixiry.common.block.entity.WitchCauldronBlockEntity;
 import org.lilbrocodes.elixiry.common.recipe.brewing.BrewingRecipe;
-import org.lilbrocodes.elixiry.common.util.BrewingRecipeManager;
+import org.lilbrocodes.elixiry.common.recipe.management.BrewingRecipeManager;
 
 import java.util.ArrayList;
 import java.util.List;

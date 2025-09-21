@@ -1,0 +1,10 @@
+{
+  "item": {
+    "item": "minecraft:arrow"
+  },
+  "output": {
+    "item": "minecraft:tipped_arrow"
+  },
+  "potion": "minecraft:empty",
+  "wild_potion": true
+}

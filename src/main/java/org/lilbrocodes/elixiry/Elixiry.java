@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.lilbrocodes.elixiry.common.commands.RegistryCommand;
 import org.lilbrocodes.elixiry.common.config.Configs;
 import org.lilbrocodes.elixiry.common.data.loader.BrewingRecipeLoader;
+import org.lilbrocodes.elixiry.common.data.loader.DumpingRecipeLoader;
 import org.lilbrocodes.elixiry.common.registry.ModBlockEntities;
 import org.lilbrocodes.elixiry.common.registry.ModBlocks;
 import org.lilbrocodes.elixiry.common.registry.ModItemGroups;
@@ -28,6 +29,7 @@ public class Elixiry implements ModInitializer {
 
         CommandRegistrationCallback.EVENT.register(new RegistryCommand()::register);
         ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new BrewingRecipeLoader());
+        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new DumpingRecipeLoader());
     }
 
     public static Identifier identify(String path) {

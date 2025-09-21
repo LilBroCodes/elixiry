@@ -1,4 +1,4 @@
-// 1.20.1	2025-09-21T17:25:29.4033892	Elixiry/Tags for minecraft:block
-6ecc24ee589f25d436d5fee38da88eda2329a7c3 data\elixiry\tags\blocks\weak_arcane_blocks.json
-59127e1d1e0c1aa583d45fa7ce44689c55c48b61 data\elixiry\tags\blocks\strong_arcane_blocks.json
+// 1.20.1	2025-09-21T21:18:52.4259839	Elixiry/Tags for minecraft:block
+7d5fa401244f4f63f43c5d8e8f88d78e008b72fe data\elixiry\tags\blocks\strong_arcane_blocks.json
+25f5accb0741f799fb82e331b42bc4b80d4f847f data\elixiry\tags\blocks\weak_arcane_blocks.json
 d81e9f3126e35e7c63fabb17b9936087d04cd065 data\minecraft\tags\blocks\mineable\pickaxe.json

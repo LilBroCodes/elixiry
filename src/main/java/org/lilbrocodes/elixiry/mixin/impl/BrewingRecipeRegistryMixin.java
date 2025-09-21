@@ -4,7 +4,7 @@ import net.minecraft.item.Item;
 import net.minecraft.potion.Potion;
 import net.minecraft.recipe.BrewingRecipeRegistry;
 import org.lilbrocodes.elixiry.Elixiry;
-import org.lilbrocodes.elixiry.common.util.BrewingRecipeManager;
+import org.lilbrocodes.elixiry.common.recipe.management.BrewingRecipeManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

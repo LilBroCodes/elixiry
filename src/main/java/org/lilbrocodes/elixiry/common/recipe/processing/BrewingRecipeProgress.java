@@ -10,7 +10,7 @@ import org.lilbrocodes.elixiry.common.block.entity.WitchCauldronBlockEntity;
 import org.lilbrocodes.elixiry.common.recipe.brewing.BrewingRecipe;
 import org.lilbrocodes.elixiry.common.recipe.brewing.step.BrewingRecipeStep;
 import org.lilbrocodes.elixiry.common.recipe.brewing.step.BrewingRecipeSteps.*;
-import org.lilbrocodes.elixiry.common.util.BrewingRecipeManager;
+import org.lilbrocodes.elixiry.common.recipe.management.BrewingRecipeManager;
 import org.lilbrocodes.elixiry.common.util.PotionModifier;
 
 public class BrewingRecipeProgress {

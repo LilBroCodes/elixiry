@@ -11,7 +11,7 @@
   "environment": "*",
   "entrypoints": {
     "fabric-datagen": [
-      "org.lilbrocodes.elixiry.data.ElixiryDataGenerator"
+      "org.lilbrocodes.elixiry.common.data.ElixiryDataGenerator"
     ],
     "client": [
       "org.lilbrocodes.elixiry.client.ElixiryClient"

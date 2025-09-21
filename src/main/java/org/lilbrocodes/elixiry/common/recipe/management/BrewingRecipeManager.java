@@ -1,4 +1,4 @@
-package org.lilbrocodes.elixiry.common.util;
+package org.lilbrocodes.elixiry.common.recipe.management;
 
 import net.minecraft.item.Item;
 import net.minecraft.potion.Potion;
@@ -8,19 +8,19 @@ import net.minecraft.util.Identifier;
 import org.lilbrocodes.elixiry.Elixiry;
 import org.lilbrocodes.elixiry.common.block.WitchCauldron;
 import org.lilbrocodes.elixiry.common.recipe.brewing.BrewingRecipe;
+import org.lilbrocodes.elixiry.common.util.AbstractPseudoRegistry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BrewingRecipeManager extends AbstractPseudoRegistry<BrewingRecipe>  {
+public class BrewingRecipeManager extends AbstractPseudoRegistry<BrewingRecipe> {
     private static BrewingRecipeManager INSTANCE;
     private final List<MissingPotionEntry> vanillaPotionRecipes = new ArrayList<>();
-    private final Map<Identifier, BrewingRecipe> RECIPES = new HashMap<>();
 
     private BrewingRecipeManager() {
-
+        super();
     }
 
     public static BrewingRecipeManager getInstance() {
@@ -30,28 +30,12 @@ public class BrewingRecipeManager extends AbstractPseudoRegistry<BrewingRecipe> 
 
     public List<BrewingRecipe> getRecipesForConditions(Potion input, WitchCauldron.HeatState heat) {
         List<BrewingRecipe> matches = new ArrayList<>();
-        for (BrewingRecipe recipe : RECIPES.values()) {
+        for (BrewingRecipe recipe : values.values()) {
             if (recipe.base == input && recipe.heat == heat) {
                 matches.add(recipe);
             }
         }
         return matches;
-    }
-
-    public void register(Identifier id, BrewingRecipe recipe) {
-        RECIPES.put(id, recipe);
-    }
-
-    public BrewingRecipe get(Identifier id) {
-        return RECIPES.get(id);
-    }
-
-    public Map<Identifier, BrewingRecipe> getAll() {
-        return RECIPES;
-    }
-
-    public void clear() {
-        RECIPES.clear();
     }
 
     public static String tryGetRegistryName(Potion potion) {
@@ -60,15 +44,8 @@ public class BrewingRecipeManager extends AbstractPseudoRegistry<BrewingRecipe> 
         else return Text.translatable(potion.finishTranslationKey("item.minecraft.potion.effect.")).getString();
     }
 
-    public Identifier find(BrewingRecipe recipe) {
-        for (Map.Entry<Identifier, BrewingRecipe> entry : RECIPES.entrySet()) {
-            if (entry.getValue() == recipe) return entry.getKey();
-        }
-        return null;
-    }
-
     public boolean containsEquivalent(Potion input, Potion output, Item item) {
-        for (BrewingRecipe recipe : RECIPES.values()) {
+        for (BrewingRecipe recipe : values.values()) {
             if (recipe.base == input && recipe.result == output && recipe.hasItemStep(item)) {
                 return true;
             }
