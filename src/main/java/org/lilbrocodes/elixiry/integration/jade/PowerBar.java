@@ -3,7 +3,11 @@ package org.lilbrocodes.elixiry.integration.jade;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.ColorHelper;
+import org.joml.Matrix4f;
 import org.lilbrocodes.elixiry.common.block.entity.WitchCauldronBlockEntity;
 import snownee.jade.api.ui.IElement;
 import snownee.jade.api.ui.IProgressStyle;
@@ -72,12 +76,15 @@ public class PowerBar implements IProgressStyle {
         float startX = x + borderThickness + padding;
         float startY = y + borderThickness + padding;
 
-        drawContext.fill(
-                (int) startX,
-                (int) startY,
-                (int) (startX + filledWidth),
-                (int) (startY + innerHeight),
-                0xFFFFFFFF
+        fillGradient(
+                drawContext,
+                startX,
+                startY,
+                startX + filledWidth,
+                startY + innerHeight,
+                0xffff9dfc,
+                0xffbb3cde,
+                innerWidth
         );
 
         TextRenderer font = MinecraftClient.getInstance().textRenderer;
@@ -89,6 +96,32 @@ public class PowerBar implements IProgressStyle {
         int textY = (int) (y + height + 2);
 
         drawContext.drawTextWithShadow(font, chargeText, textX, textY, 0xFFFFFF);
+    }
+
+    private void fillGradient(DrawContext ctx, float startX, float startY, float endX, float endY, int colorStart, int colorEnd, float fullWidth) {
+        Matrix4f matrix4f = ctx.getMatrices().peek().getPositionMatrix();
+        VertexConsumer buffer = ctx.getVertexConsumers().getBuffer(RenderLayer.getGui());
+
+        long time = System.currentTimeMillis();
+        float speed = 0.01f;
+        float tOffset = (time * speed) % 1f;
+
+        for (float x = startX; x < endX; x++) {
+            float t = (x - startX) / fullWidth;
+            t = (t + tOffset) % 1f;
+
+            int color = ColorHelper.Argb.lerp(t, colorStart, colorEnd);
+
+            float a = ColorHelper.Argb.getAlpha(color) / 255f;
+            float r = ColorHelper.Argb.getRed(color) / 255f;
+            float g = ColorHelper.Argb.getGreen(color) / 255f;
+            float b = ColorHelper.Argb.getBlue(color) / 255f;
+
+            buffer.vertex(matrix4f, x, startY, 0f).color(r, g, b, a).next();
+            buffer.vertex(matrix4f, x, endY, 0f).color(r, g, b, a).next();
+            buffer.vertex(matrix4f, x + 1, endY, 0f).color(r, g, b, a).next();
+            buffer.vertex(matrix4f, x + 1, startY, 0f).color(r, g, b, a).next();
+        }
     }
 
 }

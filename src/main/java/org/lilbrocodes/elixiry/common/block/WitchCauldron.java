@@ -226,18 +226,6 @@ public class WitchCauldron extends BlockWithEntity {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof WitchCauldronBlockEntity be) {
-                if (be.hasPotion()) {
-                    ItemStack potion = be.takePotion();
-                    ItemEntity potionDrop = new ItemEntity(
-                            world,
-                            pos.getX() + 0.5,
-                            pos.getY() + 0.5,
-                            pos.getZ() + 0.5,
-                            potion
-                    );
-                    world.spawnEntity(potionDrop);
-                }
-
                 be.copyStacks().forEach(identifier -> {
                     ItemStack stack = identifier.stack();
                     if (!stack.isEmpty()) {

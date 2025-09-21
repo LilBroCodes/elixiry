@@ -48,7 +48,7 @@ public class WitchCauldronBlockEntity extends BlockEntity {
     }
 
     public static final int MAX_ITEMS = 4;
-    public static final int MAX_POWER = 32;
+    public static final int MAX_POWER = 48;
     public static final List<BlockPos> POSSIBLE_ARCANE_PROVIDERS = BlockPos.stream(-2, -2, -2, 2, 2, 2)
             .map(BlockPos::toImmutable)
             .toList();
